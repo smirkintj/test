@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -7,6 +8,8 @@ from datetime import datetime, date
 from typing import Optional
 import concurrent.futures
 import logging
+
+_STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 
 from database import init_db, get_db, SearchJob, FlightResult, PriceAlert
 from scraper import scrape_flights_for_date, generate_date_range
@@ -307,12 +310,12 @@ def reset_alert(alert_id: int, db: Session = Depends(get_db)):
 
 # ---------- Static files ----------
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
 
 
 @app.get("/")
 def index():
-    return FileResponse("static/index.html")
+    return FileResponse(os.path.join(_STATIC_DIR, "index.html"))
 
 
 if __name__ == "__main__":
