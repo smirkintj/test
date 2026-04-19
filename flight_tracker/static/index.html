@@ -9,85 +9,117 @@
 </head>
 <body>
 
-<header>
-  <span class="logo">✈ Flight Tracker</span>
-  <span class="source-pill">Prices via Google Flights · Not airline direct</span>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-logo">✈ Flight Tracker</span>
+    <span class="topbar-pill">Google Flights data · Not airline direct</span>
+  </div>
 </header>
 
 <main>
 
-  <!-- ── Search card ── -->
-  <section class="card search-card">
+  <!-- ── Search ── -->
+  <section class="search-card">
+
+    <!-- Mode pills -->
     <div class="mode-row">
       <button class="mode-btn active" data-mode="oneway">One Way</button>
       <button class="mode-btn" data-mode="bestwindow">Best Window</button>
-      <button class="mode-btn" data-mode="compare">Destination Showdown</button>
+      <button class="mode-btn" data-mode="compare">Showdown</button>
     </div>
 
-    <!-- One Way form -->
-    <form id="form-oneway" class="search-form" autocomplete="off">
-      <div class="fields-row">
-        <div class="field">
+    <!-- ONE WAY -->
+    <div id="form-oneway" class="sform">
+      <div class="route-row">
+        <div class="ac-wrap" data-hidden="ow-from">
           <label>From</label>
-          <input id="ow-from" type="text" placeholder="KUL" maxlength="4" required>
+          <input class="ac-text" placeholder="City or airport" autocomplete="off" spellcheck="false">
+          <input type="hidden" id="ow-from">
+          <div class="ac-drop"></div>
         </div>
         <button type="button" class="swap-btn" data-a="ow-from" data-b="ow-to">⇄</button>
-        <div class="field">
+        <div class="ac-wrap" data-hidden="ow-to">
           <label>To</label>
-          <input id="ow-to" type="text" placeholder="CGK" maxlength="4" required>
+          <input class="ac-text" placeholder="City or airport" autocomplete="off" spellcheck="false">
+          <input type="hidden" id="ow-to">
+          <div class="ac-drop"></div>
         </div>
-        <div class="field">
-          <label>From Date</label>
-          <input id="ow-datefrom" type="date" required>
+      </div>
+      <div class="meta-row">
+        <div class="dp-wrap">
+          <label>From date</label>
+          <div class="dp-trigger" data-hidden="ow-datefrom">
+            <span class="dp-display">Select date</span>
+            <span class="dp-icon">▾</span>
+            <input type="hidden" id="ow-datefrom">
+          </div>
         </div>
-        <div class="field">
-          <label>To Date</label>
-          <input id="ow-dateto" type="date" required>
+        <div class="dp-wrap">
+          <label>To date</label>
+          <div class="dp-trigger" data-hidden="ow-dateto">
+            <span class="dp-display">Select date</span>
+            <span class="dp-icon">▾</span>
+            <input type="hidden" id="ow-dateto">
+          </div>
         </div>
-        <div class="field">
+        <div class="sel-wrap">
           <label>Cabin</label>
-          <select id="ow-seat">
+          <select id="ow-seat" class="sel">
             <option value="economy">Economy</option>
             <option value="premium-economy">Prem. Economy</option>
             <option value="business">Business</option>
             <option value="first">First</option>
           </select>
         </div>
-        <div class="field">
-          <label>Budget/person</label>
-          <input id="ow-budget" type="number" placeholder="No limit" min="0">
+        <div class="sel-wrap">
+          <label>Budget/pax (MYR)</label>
+          <input id="ow-budget" type="number" class="sel" placeholder="No limit" min="0">
         </div>
       </div>
-      <button type="submit" class="search-btn">Search Flights</button>
-    </form>
+      <button class="go-btn" id="btn-oneway">Search Flights</button>
+    </div>
 
-    <!-- Best Window form -->
-    <form id="form-bestwindow" class="search-form hidden" autocomplete="off">
-      <div class="fields-row">
-        <div class="field">
+    <!-- BEST WINDOW -->
+    <div id="form-bestwindow" class="sform hidden">
+      <div class="route-row">
+        <div class="ac-wrap" data-hidden="bw-from">
           <label>From</label>
-          <input id="bw-from" type="text" placeholder="KUL" maxlength="4" required>
+          <input class="ac-text" placeholder="City or airport" autocomplete="off" spellcheck="false">
+          <input type="hidden" id="bw-from">
+          <div class="ac-drop"></div>
         </div>
         <button type="button" class="swap-btn" data-a="bw-from" data-b="bw-to">⇄</button>
-        <div class="field">
+        <div class="ac-wrap" data-hidden="bw-to">
           <label>To</label>
-          <input id="bw-to" type="text" placeholder="CGK" maxlength="4" required>
+          <input class="ac-text" placeholder="City or airport" autocomplete="off" spellcheck="false">
+          <input type="hidden" id="bw-to">
+          <div class="ac-drop"></div>
         </div>
-        <div class="field">
-          <label>Search From</label>
-          <input id="bw-searchfrom" type="date" required>
+      </div>
+      <div class="meta-row">
+        <div class="dp-wrap">
+          <label>Search from</label>
+          <div class="dp-trigger" data-hidden="bw-searchfrom">
+            <span class="dp-display">Select date</span>
+            <span class="dp-icon">▾</span>
+            <input type="hidden" id="bw-searchfrom">
+          </div>
         </div>
-        <div class="field">
-          <label>Search To</label>
-          <input id="bw-searchto" type="date" required>
+        <div class="dp-wrap">
+          <label>Search to</label>
+          <div class="dp-trigger" data-hidden="bw-searchto">
+            <span class="dp-display">Select date</span>
+            <span class="dp-icon">▾</span>
+            <input type="hidden" id="bw-searchto">
+          </div>
         </div>
-        <div class="field">
+        <div class="sel-wrap">
           <label>Trip nights</label>
-          <input id="bw-nights" type="number" value="7" min="1" max="30" required>
+          <input id="bw-nights" type="number" class="sel" value="7" min="1" max="30">
         </div>
-        <div class="field">
+        <div class="sel-wrap">
           <label>Cabin</label>
-          <select id="bw-seat">
+          <select id="bw-seat" class="sel">
             <option value="economy">Economy</option>
             <option value="premium-economy">Prem. Economy</option>
             <option value="business">Business</option>
@@ -95,39 +127,59 @@
           </select>
         </div>
       </div>
-      <button type="submit" class="search-btn">Find Cheapest Windows</button>
-    </form>
+      <button class="go-btn" id="btn-bestwindow">Find Cheapest Windows</button>
+    </div>
 
-    <!-- Compare form -->
-    <form id="form-compare" class="search-form hidden" autocomplete="off">
-      <div class="fields-row">
-        <div class="field">
+    <!-- COMPARE -->
+    <div id="form-compare" class="sform hidden">
+      <div class="route-row compare-route">
+        <div class="ac-wrap" data-hidden="cmp-from">
           <label>From</label>
-          <input id="cmp-from" type="text" placeholder="KUL" maxlength="4" required>
+          <input class="ac-text" placeholder="City or airport" autocomplete="off" spellcheck="false">
+          <input type="hidden" id="cmp-from">
+          <div class="ac-drop"></div>
         </div>
-        <div class="field">
-          <label>Destination 1</label>
-          <input class="cmp-to" type="text" placeholder="CGK" maxlength="4" required>
+        <div class="cmp-dests">
+          <div class="ac-wrap cmp-dest-wrap" data-hidden="cmp-to-0">
+            <label>Dest 1</label>
+            <input class="ac-text" placeholder="e.g. Bangkok" autocomplete="off" spellcheck="false">
+            <input type="hidden" id="cmp-to-0">
+            <div class="ac-drop"></div>
+          </div>
+          <div class="ac-wrap cmp-dest-wrap" data-hidden="cmp-to-1">
+            <label>Dest 2</label>
+            <input class="ac-text" placeholder="e.g. Bali" autocomplete="off" spellcheck="false">
+            <input type="hidden" id="cmp-to-1">
+            <div class="ac-drop"></div>
+          </div>
+          <div class="ac-wrap cmp-dest-wrap" data-hidden="cmp-to-2">
+            <label>Dest 3</label>
+            <input class="ac-text" placeholder="e.g. Singapore" autocomplete="off" spellcheck="false">
+            <input type="hidden" id="cmp-to-2">
+            <div class="ac-drop"></div>
+          </div>
         </div>
-        <div class="field">
-          <label>Destination 2</label>
-          <input class="cmp-to" type="text" placeholder="BKK" maxlength="4">
+      </div>
+      <div class="meta-row">
+        <div class="dp-wrap">
+          <label>From date</label>
+          <div class="dp-trigger" data-hidden="cmp-datefrom">
+            <span class="dp-display">Select date</span>
+            <span class="dp-icon">▾</span>
+            <input type="hidden" id="cmp-datefrom">
+          </div>
         </div>
-        <div class="field">
-          <label>Destination 3</label>
-          <input class="cmp-to" type="text" placeholder="SIN" maxlength="4">
+        <div class="dp-wrap">
+          <label>To date</label>
+          <div class="dp-trigger" data-hidden="cmp-dateto">
+            <span class="dp-display">Select date</span>
+            <span class="dp-icon">▾</span>
+            <input type="hidden" id="cmp-dateto">
+          </div>
         </div>
-        <div class="field">
-          <label>From Date</label>
-          <input id="cmp-datefrom" type="date" required>
-        </div>
-        <div class="field">
-          <label>To Date</label>
-          <input id="cmp-dateto" type="date" required>
-        </div>
-        <div class="field">
+        <div class="sel-wrap">
           <label>Cabin</label>
-          <select id="cmp-seat">
+          <select id="cmp-seat" class="sel">
             <option value="economy">Economy</option>
             <option value="premium-economy">Prem. Economy</option>
             <option value="business">Business</option>
@@ -135,129 +187,146 @@
           </select>
         </div>
       </div>
-      <button type="submit" class="search-btn">Compare Destinations</button>
-    </form>
+      <button class="go-btn" id="btn-compare">Compare Destinations</button>
+    </div>
+
   </section>
 
   <!-- ── Progress ── -->
-  <section id="progress-card" class="card hidden">
-    <div class="progress-top">
+  <div id="progress-card" class="prog-card hidden">
+    <div class="prog-top">
       <span id="progress-label">Searching…</span>
       <span id="progress-pct">0%</span>
     </div>
-    <div class="progress-track"><div id="progress-bar" class="progress-fill"></div></div>
-    <p id="progress-sub"></p>
-  </section>
+    <div class="prog-track"><div id="progress-bar" class="prog-fill"></div></div>
+    <p class="prog-note">Prices from Google Flights · Not airline direct · Verify before booking</p>
+  </div>
 
-  <!-- ── Results: One Way ── -->
+  <!-- ── One-Way Results ── -->
   <div id="results-oneway" class="hidden">
-    <div class="source-banner">
-      <span>📊 <strong>Google Flights</strong> (aggregator) · Airline websites may show higher prices · Always verify at checkout</span>
-      <button id="share-btn" class="pill-btn">Share Trip Card ↗</button>
+
+    <div class="src-banner">
+      <span>📊 <strong>Google Flights</strong> aggregator · Airline sites may show higher prices · Always verify before booking</span>
+      <button id="share-btn" class="link-btn">Share ↗</button>
     </div>
 
-    <div class="stats-row" id="ow-stats"></div>
+    <div class="stats-strip" id="ow-stats"></div>
 
     <div class="two-col">
-      <section class="card">
-        <div class="card-title">Price Trend
-          <span class="source-tag">Google Flights</span>
-        </div>
-        <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
-      </section>
-      <section class="card">
-        <div class="card-title">Price Calendar
-          <span class="source-tag">Google Flights</span>
-        </div>
+      <div class="panel">
+        <div class="panel-label">Price Trend <span class="src-tag">Google Flights</span></div>
+        <div class="chart-box"><canvas id="trend-chart"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Price Calendar <span class="src-tag">Google Flights</span></div>
         <div id="calendar"></div>
-      </section>
+      </div>
     </div>
 
-    <section class="card">
-      <div class="table-top">
-        <div class="card-title">Flights <span id="filtered-count"></span>
-          <span class="source-tag">Google Flights</span>
+    <div class="panel">
+      <div class="flight-list-head">
+        <div class="panel-label">
+          Flights <span id="filtered-count" class="muted-sm"></span>
+          <span class="src-tag">Google Flights · MYR</span>
         </div>
-        <div class="table-controls">
-          <input id="airline-filter" type="text" placeholder="Filter airline…" class="filter-input">
-          <select id="stops-filter" class="filter-input">
+        <div class="list-filters">
+          <input id="airline-filter" class="filter-inp" type="text" placeholder="Airline…">
+          <select id="stops-filter" class="filter-inp">
             <option value="">All stops</option>
-            <option value="0">Direct only</option>
+            <option value="0">Direct</option>
             <option value="1">Max 1 stop</option>
+          </select>
+          <select id="sort-select" class="filter-inp">
+            <option value="price-asc">Price ↑</option>
+            <option value="price-desc">Price ↓</option>
+            <option value="flight_date-asc">Date ↑</option>
+            <option value="duration_minutes-asc">Duration ↑</option>
           </select>
         </div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="sortable" data-col="flight_date">Date</th>
-              <th class="sortable" data-col="airlines">Airline</th>
-              <th class="sortable" data-col="departure_time">Dep</th>
-              <th class="sortable" data-col="arrival_time">Arr</th>
-              <th class="sortable" data-col="duration_minutes">Duration</th>
-              <th class="sortable" data-col="stops">Stops</th>
-              <th class="sortable" data-col="price">Price <span class="source-tag">GF</span></th>
-            </tr>
-          </thead>
-          <tbody id="flights-tbody"></tbody>
-        </table>
-      </div>
-    </section>
+      <div id="flights-list"></div>
+    </div>
 
-    <!-- Price Intelligence -->
-    <section class="card" id="insights-card" style="display:none">
-      <div class="card-title">Price Intelligence
-        <span class="source-tag">Based on your searches</span>
-      </div>
+    <div id="insights-card" class="panel" style="display:none">
+      <div class="panel-label">Price Intelligence <span class="src-tag">Your search history</span></div>
       <div id="insights-body"></div>
-    </section>
+    </div>
+
   </div>
 
-  <!-- ── Results: Best Window ── -->
+  <!-- ── Best Window Results ── -->
   <div id="results-bestwindow" class="hidden">
-    <div class="source-banner">
-      <span>📊 <strong>Google Flights</strong> (aggregator) · Prices are indicative — verify before booking</span>
+    <div class="src-banner">
+      <span>📊 <strong>Google Flights</strong> aggregator · Prices are indicative · Verify before booking</span>
     </div>
-    <section class="card">
-      <div class="card-title">Cheapest Windows <span class="source-tag">Google Flights</span></div>
+    <div class="panel">
+      <div class="panel-label">Cheapest Windows <span class="src-tag">Google Flights · MYR</span></div>
       <div id="windows-list"></div>
-    </section>
-  </div>
-
-  <!-- ── Results: Compare ── -->
-  <div id="results-compare" class="hidden">
-    <div class="source-banner">
-      <span>📊 <strong>Google Flights</strong> (aggregator) · Click Book to verify live price on Trip.com</span>
     </div>
-    <section class="card">
-      <div class="card-title">Destination Showdown <span class="source-tag">Google Flights</span></div>
-      <div id="compare-list"></div>
-    </section>
   </div>
 
-  <!-- ── Alerts (collapsible) ── -->
-  <details class="card collapsible">
+  <!-- ── Compare Results ── -->
+  <div id="results-compare" class="hidden">
+    <div class="src-banner">
+      <span>📊 <strong>Google Flights</strong> aggregator · Click Trip.com to verify live price</span>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Destination Showdown <span class="src-tag">Google Flights · MYR</span></div>
+      <div id="compare-list"></div>
+    </div>
+  </div>
+
+  <!-- ── Alerts ── -->
+  <details class="panel collapsible">
     <summary>🔔 Price Alerts</summary>
-    <form id="alert-form" class="search-form" style="margin-top:16px" autocomplete="off">
-      <div class="fields-row">
-        <div class="field"><label>From</label><input id="al-from" type="text" placeholder="KUL" maxlength="4" required></div>
-        <div class="field"><label>To</label><input id="al-to" type="text" placeholder="CGK" maxlength="4" required></div>
-        <div class="field"><label>Alert below ($)</label><input id="al-threshold" type="number" placeholder="150" min="1" required></div>
-        <div class="field"><label>Label</label><input id="al-label" type="text" placeholder="Weekend trip"></div>
+    <div class="sform" style="margin-top:16px">
+      <div class="route-row">
+        <div class="ac-wrap" data-hidden="al-from">
+          <label>From</label>
+          <input class="ac-text" placeholder="City or airport" autocomplete="off" spellcheck="false">
+          <input type="hidden" id="al-from">
+          <div class="ac-drop"></div>
+        </div>
+        <div class="ac-wrap" data-hidden="al-to">
+          <label>To</label>
+          <input class="ac-text" placeholder="City or airport" autocomplete="off" spellcheck="false">
+          <input type="hidden" id="al-to">
+          <div class="ac-drop"></div>
+        </div>
+        <div class="sel-wrap">
+          <label>Alert below (MYR)</label>
+          <input id="al-threshold" type="number" class="sel" placeholder="e.g. 500" min="1">
+        </div>
+        <div class="sel-wrap">
+          <label>Label</label>
+          <input id="al-label" type="text" class="sel" placeholder="Weekend trip">
+        </div>
       </div>
-      <button type="submit" class="search-btn">Add Alert</button>
-    </form>
-    <div id="alerts-list" style="margin-top:16px"></div>
+      <button class="go-btn" id="btn-alert">Add Alert</button>
+    </div>
+    <div id="alerts-list" style="margin-top:14px"></div>
   </details>
 
-  <!-- ── Recent searches (collapsible) ── -->
-  <details class="card collapsible">
+  <!-- ── Recent ── -->
+  <details class="panel collapsible">
     <summary>🕐 Recent Searches</summary>
     <div id="history-list" style="margin-top:12px"></div>
   </details>
 
 </main>
+
+<!-- Date-picker popup (shared, moved by JS) -->
+<div id="dp-popup" class="dp-popup">
+  <div class="dp-head">
+    <button class="dp-nav" id="dp-prev">‹</button>
+    <span class="dp-month-label" id="dp-month-label"></span>
+    <button class="dp-nav" id="dp-next">›</button>
+  </div>
+  <div class="dp-weekdays">
+    <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+  </div>
+  <div class="dp-days" id="dp-days"></div>
+</div>
 
 <script src="/static/app.js"></script>
 </body>

@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException
+from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse
 from sqlalchemy.orm import Session
@@ -8,6 +8,49 @@ from datetime import datetime, date, timedelta
 from typing import Optional
 from collections import defaultdict
 import logging
+
+# City-name → IATA code aliases for friendly search
+_CITY_ALIASES: dict[str, list[str]] = {
+    "kuala lumpur": ["KUL", "SZB"], "kl": ["KUL"],
+    "jakarta": ["CGK"], "bali": ["DPS"], "denpasar": ["DPS"],
+    "singapore": ["SIN"], "bangkok": ["BKK", "DMK"],
+    "tokyo": ["NRT", "HND"], "osaka": ["KIX", "ITM"],
+    "hong kong": ["HKG"], "seoul": ["ICN", "GMP"], "taipei": ["TPE"],
+    "dubai": ["DXB"], "abu dhabi": ["AUH"], "doha": ["DOH"],
+    "london": ["LHR", "LGW", "STN"], "paris": ["CDG", "ORY"],
+    "amsterdam": ["AMS"], "frankfurt": ["FRA"], "istanbul": ["IST"],
+    "zurich": ["ZRH"], "rome": ["FCO"], "madrid": ["MAD"],
+    "sydney": ["SYD"], "melbourne": ["MEL"], "perth": ["PER"],
+    "new york": ["JFK", "EWR", "LGA"], "los angeles": ["LAX"],
+    "beijing": ["PEK"], "shanghai": ["PVG"], "guangzhou": ["CAN"],
+    "ho chi minh": ["SGN"], "saigon": ["SGN"], "hanoi": ["HAN"],
+    "phnom penh": ["PNH"], "yangon": ["RGN"], "vientiane": ["VTE"],
+    "penang": ["PEN"], "johor bahru": ["JHB"], "kota kinabalu": ["BKI"],
+    "langkawi": ["LGK"], "kuching": ["KCH"], "kota bharu": ["KBR"],
+    "surabaya": ["SUB"], "medan": ["KNO"], "yogyakarta": ["YIA", "JOG"],
+    "bandung": ["BDO"], "makassar": ["UPG"],
+    "phuket": ["HKT"], "chiang mai": ["CNX"], "krabi": ["KBV"],
+    "manila": ["MNL"], "cebu": ["CEB"],
+    "colombo": ["CMB"], "delhi": ["DEL"], "mumbai": ["BOM"],
+    "bangalore": ["BLR"], "bengaluru": ["BLR"], "chennai": ["MAA"],
+    "male": ["MLE"], "kathmandu": ["KTM"],
+    "cairo": ["CAI"], "nairobi": ["NBO"], "johannesburg": ["JNB"],
+    "toronto": ["YYZ"], "vancouver": ["YVR"],
+    "mexico city": ["MEX"], "sao paulo": ["GRU"],
+}
+
+_AIRPORT_CACHE: list[dict] | None = None
+
+def _get_airports() -> list[dict]:
+    global _AIRPORT_CACHE
+    if _AIRPORT_CACHE is not None:
+        return _AIRPORT_CACHE
+    from fast_flights._generated_enum import Airport
+    _AIRPORT_CACHE = [
+        {"code": ap.value, "name": ap.name.replace("_", " ").title().replace(" Airport", "").strip()}
+        for ap in Airport
+    ]
+    return _AIRPORT_CACHE
 
 _STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 
@@ -676,6 +719,51 @@ def reset_alert(alert_id: int, db: Session = Depends(get_db)):
     alert.triggered_date = None
     db.commit()
     return {"message": "reset"}
+
+
+# ---------- Airport search ----------
+
+@app.get("/api/airports/search")
+def search_airports(q: str = Query(default="", min_length=0)):
+    query = q.strip().lower()
+    if len(query) < 2:
+        return []
+
+    airports = _get_airports()
+
+    # Priority 1: city alias matches
+    alias_codes: set[str] = set()
+    for city, codes in _CITY_ALIASES.items():
+        if query == city or city.startswith(query) or query in city:
+            alias_codes.update(codes)
+
+    results: list[dict] = []
+    seen: set[str] = set()
+
+    def _add(ap: dict):
+        if ap["code"] not in seen:
+            results.append(ap)
+            seen.add(ap["code"])
+
+    for ap in airports:
+        if ap["code"] in alias_codes:
+            _add(ap)
+    for ap in airports:                          # exact code
+        if ap["code"].lower() == query:
+            _add(ap)
+    for ap in airports:                          # code prefix
+        if ap["code"].lower().startswith(query):
+            _add(ap)
+        if len(results) >= 8:
+            break
+    if len(results) < 8:
+        for ap in airports:                      # name contains
+            if query in ap["name"].lower():
+                _add(ap)
+            if len(results) >= 8:
+                break
+
+    return results[:8]
 
 
 # ---------- Static ----------
