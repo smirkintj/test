@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Boolean, Text
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -16,12 +16,14 @@ class SearchJob(Base):
     __tablename__ = "search_jobs"
 
     id = Column(Integer, primary_key=True, index=True)
+    search_type = Column(String(20), default="one-way")  # one-way, best-window, compare
     from_airport = Column(String(10), nullable=False)
-    to_airport = Column(String(10), nullable=False)
+    to_airport = Column(String(200), nullable=False)     # comma-separated for compare
     date_from = Column(String(10), nullable=False)
     date_to = Column(String(10), nullable=False)
     seat_class = Column(String(20), default="economy")
-    status = Column(String(20), default="pending")  # pending, running, done, error
+    trip_days = Column(Integer, nullable=True)           # best-window only
+    status = Column(String(20), default="pending")
     total_dates = Column(Integer, default=0)
     completed_dates = Column(Integer, default=0)
     error_message = Column(Text, nullable=True)
@@ -37,14 +39,30 @@ class FlightResult(Base):
     flight_date = Column(String(10), nullable=False)
     price = Column(Integer, nullable=False)
     currency = Column(String(5), default="USD")
+    source = Column(String(50), default="Google Flights")
     airlines = Column(String(500), nullable=False)
     duration_minutes = Column(Integer, nullable=False)
     stops = Column(Integer, nullable=False)
-    departure_time = Column(String(10), nullable=True)
-    arrival_time = Column(String(10), nullable=True)
+    departure_time = Column(String(20), nullable=True)
+    arrival_time = Column(String(20), nullable=True)
     from_airport = Column(String(10), nullable=False)
     to_airport = Column(String(10), nullable=False)
     scraped_at = Column(DateTime, default=datetime.utcnow)
+
+
+class BestWindowResult(Base):
+    __tablename__ = "best_window_results"
+
+    id = Column(Integer, primary_key=True, index=True)
+    search_job_id = Column(Integer, nullable=False, index=True)
+    depart_date = Column(String(10), nullable=False)
+    return_date = Column(String(10), nullable=False)
+    outbound_price = Column(Integer, nullable=False)
+    return_price = Column(Integer, nullable=False)
+    total_price = Column(Integer, nullable=False)
+    outbound_airline = Column(String(500), nullable=True)
+    return_airline = Column(String(500), nullable=True)
+    source = Column(String(50), default="Google Flights")
 
 
 class PriceAlert(Base):
